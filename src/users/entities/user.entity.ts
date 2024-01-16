@@ -1,8 +1,8 @@
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/utils/base.entity';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
-import { hash } from 'bcrypt';
 import { Wish } from 'src/wishes/entities/wish.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -49,10 +49,13 @@ export class User extends BaseEntity {
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
-  // Добавить offers и wishlists
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  wishlists: Wishlist[];
 
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await hash(this.password, 10);
-  }
+  // Добавить offers
+
+  // @BeforeInsert()
+  // async hashPassword() {
+  //   this.password = await hash(this.password, 10);
+  // }
 }

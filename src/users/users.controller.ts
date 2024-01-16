@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { TUser } from 'src/users/types/user.type';
+import { IUserRequest, TUser } from 'src/users/types/user.type';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User } from './entities/user.entity';
 
@@ -8,18 +8,9 @@ import { User } from './entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // перенести в модуль авторизации и убрать пароль
-  @Post('signup')
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(createUserDto);
-  }
-
   @Get('me')
-  async getOneMe(@Req() req): Promise<TUser> {
-    const { password, ...rest } = await this.usersService.findOne(
-      'id',
-      req.user.id
-    );
-    return rest;
+  async findMe(@Req() req: IUserRequest): Promise<TUser> {
+    const { password, ...user } = await req.user;
+    return user;
   }
 }

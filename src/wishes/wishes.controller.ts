@@ -9,7 +9,7 @@ export class WishesController {
 
   //  Проверить передачу данных о владельце
   @Post()
-  async createWish(@Body() createWishDto: CreateWishDto, @Req() req: any): Promise<Wish> {
-    return this.wishesService.createWish(createWishDto, req?.user);
+  async create(@Body() createWishDto: CreateWishDto, @Req() req: any): Promise<Wish> {
+    return this.wishesService.create(createWishDto, req?.user);
   }
 }
