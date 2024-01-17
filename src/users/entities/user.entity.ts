@@ -38,7 +38,7 @@ export class User extends BaseEntity {
   @IsNotEmpty()
   email: string;
 
-  @Column({ select: false })
+  @Column()
   @IsString()
   @IsNotEmpty()
   @MinLength(7, {
