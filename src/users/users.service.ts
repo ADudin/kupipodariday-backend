@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,19 +14,31 @@ export class UsersService {
   ) {}
   
   async findUserName(userName: string): Promise<User> {
-    return await this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: {
         username: userName
       }
     });
+
+    if (!user) {
+      throw new BadRequestException('Пользователь не найден');
+    }
+
+    return user;
   }
 
   async findUserEmail(userEmail: string): Promise<User> {
-    return await this.usersRepository.findOne({
+    const user = await this.usersRepository.findOne({
       where: {
         email: userEmail
       }
     });
+
+    if (!user) {
+      throw new BadRequestException('Пользователь не найден');
+    }
+
+    return user;
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -49,8 +61,4 @@ export class UsersService {
   async findUserInfo(key: string | number, param: any): Promise<User> {
     return await this.usersRepository.findOneBy({ [key]: param });
   }
-
-  // async findOne(key: string, param: any): Promise<User> {
-  //   return await this.usersRepository.findOneBy({ [key]: param });
-  // }
 }
