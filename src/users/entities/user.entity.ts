@@ -3,6 +3,7 @@ import { BaseEntity } from 'src/utils/base.entity';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -52,10 +53,6 @@ export class User extends BaseEntity {
   @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlists: Wishlist[];
 
-  // Добавить offers
-
-  // @BeforeInsert()
-  // async hashPassword() {
-  //   this.password = await hash(this.password, 10);
-  // }
+  @OneToMany(() => Offer, (offer) => offer.user)
+  offers: Offer[];
 }

@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, IsUrl, MaxLength, Min, MinLength } from 'class-validator';
+import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { BaseEntity } from 'src/utils/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
@@ -53,5 +54,6 @@ export class Wish extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   owner: User;
 
-  // Добавить offers
+  @ManyToOne(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 }
