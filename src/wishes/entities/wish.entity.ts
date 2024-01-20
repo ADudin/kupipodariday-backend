@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, IsUrl, MaxLength, Min, MinLength } from 'class-validator';
+import { IsNumber, IsString, IsUrl, MaxLength, Min, MinLength } from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { BaseEntity } from 'src/utils/base.entity';
@@ -8,7 +8,6 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 export class Wish extends BaseEntity {
   @Column()
   @IsString()
-  @IsNotEmpty()
   @MinLength(1, {
     message: 'Название подарка должно содержать не менее 1 символа',
   })
@@ -25,19 +24,18 @@ export class Wish extends BaseEntity {
   @IsUrl()
   image: string;
 
-  @Column({ type: 'decimal', scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   @IsNumber()
   @Min(1)
   price: number;
 
-  @Column({ type: 'decimal', scale: 2 })
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   @Min(1)
   raised: number;
 
   @Column()
   @IsString()
-  @IsNotEmpty()
   @MinLength(1, {
     message: 'Описание подарка должно содержать не менее 1 символа',
   })
@@ -46,7 +44,7 @@ export class Wish extends BaseEntity {
   })
   description: string;
 
-  @Column({ type: 'decimal', scale: 0, default: 0})
+  @Column({ type: 'decimal', precision: 10, scale: 0, default: 0})
   @IsNumber()
   copied: number;
 
