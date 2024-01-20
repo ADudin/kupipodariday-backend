@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/createWish.dto';
 import { Wish } from './entities/wish.entity';
@@ -13,5 +13,10 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   async create(@Body() createWishDto: CreateWishDto, @Req() req: IUserRequest): Promise<Wish> {
     return this.wishesService.create(createWishDto, req.user);
+  }
+
+  @Get('last')
+  async getLastWishes(): Promise<Wish[]> {
+    return this.wishesService.findLast();
   }
 }

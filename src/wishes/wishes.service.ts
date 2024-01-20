@@ -19,6 +19,14 @@ export class WishesService {
     return await this.wishesRepository.save(wish);
   }
 
+  async findLast(): Promise<Wish[]> {
+    const wishes = await this.wishesRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 40,
+    });
+    return wishes;
+  }
+
   async findOne(id: number): Promise<Wish> {
     const wish = this.wishesRepository.findOne({
       where: {
