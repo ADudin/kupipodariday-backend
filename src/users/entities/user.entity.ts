@@ -42,8 +42,8 @@ export class User extends BaseEntity {
   @Column()
   @IsString()
   @IsNotEmpty()
-  @MinLength(7, {
-    message: 'Пароль должен содержать не менее 7 символов',
+  @MinLength(2, {
+    message: 'Пароль должен содержать не менее 2 символов',
   })
   password: string;
 

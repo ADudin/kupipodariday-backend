@@ -1,7 +1,7 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUrl, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsOptional, IsString, IsUrl, MaxLength, MinLength } from "class-validator";
 
-export class CreateUserDto {
-  @IsNotEmpty()
+export class UpdateUserDto {
+  @IsOptional()
   @IsString()
   @MinLength(2, {
     message: 'Имя пользователя должно содержать не менее 2 символов',
@@ -25,12 +25,12 @@ export class CreateUserDto {
   @IsUrl()
   avatar: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
   email: string;
 
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @MinLength(2, {
     message: 'Пароль должен содержать не менее 2 символов',
