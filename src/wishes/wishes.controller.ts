@@ -19,4 +19,10 @@ export class WishesController {
   async getLastWishes(): Promise<Wish[]> {
     return this.wishesService.findLast();
   }
+
+  @Get('top')
+  async getTopWishes(): Promise<Wish[]> {
+    return this.wishesService.findTop();
+  }
+  
 }

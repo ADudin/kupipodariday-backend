@@ -20,11 +20,17 @@ export class WishesService {
   }
 
   async findLast(): Promise<Wish[]> {
-    const wishes = await this.wishesRepository.find({
+    return await this.wishesRepository.find({
       order: { createdAt: 'DESC' },
       take: 40,
     });
-    return wishes;
+  }
+
+  async findTop(): Promise<Wish[]> {
+    return await this.wishesRepository.find({
+      order: { copied: 'DESC' },
+      take: 20,
+    });
   }
 
   async findOne(id: number): Promise<Wish> {
