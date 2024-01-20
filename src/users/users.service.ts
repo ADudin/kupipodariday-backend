@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { HashService } from 'src/hash/hash.service';
@@ -13,6 +13,10 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
     private readonly hashService: HashService,
   ) {}
+
+  async findUserInfo(key: string | number, param: any): Promise<User> {
+    return await this.usersRepository.findOneBy({ [key]: param });
+  }
   
   async findUserName(userName: string): Promise<User> {
     const user = await this.usersRepository.findOne({
@@ -28,19 +32,19 @@ export class UsersService {
     return user;
   }
 
-  async findUserEmail(userEmail: string): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: {
-        email: userEmail
-      },
-    });
+  // async findUserEmail(userEmail: string): Promise<User> {
+  //   const user = await this.usersRepository.findOne({
+  //     where: {
+  //       email: userEmail
+  //     },
+  //   });
 
-    if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
-    }
+  //   if (!user) {
+  //     throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+  //   }
 
-    return user;
-  }
+  //   return user;
+  // }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const userName = await this.usersRepository.findOne({
@@ -67,10 +71,6 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async findUserInfo(key: string | number, param: any): Promise<User> {
-    return await this.usersRepository.findOneBy({ [key]: param });
-  }
-
   async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
     const users = await this.usersRepository.findBy([
       { username: updateUserDto.username },
@@ -91,5 +91,12 @@ export class UsersService {
 
     Object.assign(currentUser, updateUserDto);
     return await this.usersRepository.save(currentUser);
+  }
+
+  async findMany(query: string): Promise<User[]> {
+    return await this.usersRepository.findBy([
+      { username: Like(`%${query}%`) },
+      { email: Like(`%${query}%`) },
+    ]);
   }
 }
