@@ -49,7 +49,6 @@ export class Wish extends BaseEntity {
   copied: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
-  @JoinColumn({ name: 'user_id' })
   owner: User;
 
   @ManyToOne(() => Offer, (offer) => offer.item)

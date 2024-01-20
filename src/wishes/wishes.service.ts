@@ -13,7 +13,10 @@ export class WishesService {
   ) {}
 
   async create(createWishDto: CreateWishDto, owner: User): Promise<Wish> {
-    return await this.wishesRepository.save({ ...createWishDto, owner });
+    const wish = new Wish();
+    Object.assign(wish, createWishDto);
+    wish.owner = owner;
+    return await this.wishesRepository.save(wish);
   }
 
   async findOne(id: number): Promise<Wish> {

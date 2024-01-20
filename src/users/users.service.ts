@@ -5,12 +5,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { HashService } from 'src/hash/hash.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) 
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Wish)
+    private readonly wishesRepository: Repository<Wish>,
     private readonly hashService: HashService,
   ) {}
 
@@ -91,6 +94,12 @@ export class UsersService {
 
     Object.assign(currentUser, updateUserDto);
     return await this.usersRepository.save(currentUser);
+  }
+
+  async findOwnWishes(userId: number): Promise<Wish[]> {
+    return await this.wishesRepository.findBy({
+      owner: { id: userId },
+    });
   }
 
   async findMany(query: string): Promise<User[]> {

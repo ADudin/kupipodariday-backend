@@ -5,6 +5,7 @@ import { IUserRequest, TUser } from 'src/users/types/user.type';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { FindUsersDto } from './dto/findUsers.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Controller('users')
 export class UsersController {
@@ -28,6 +29,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async updateCurrentUser(@Req() req: IUserRequest, @Body() updateUserDto: UpdateUserDto): Promise<TUser> {
     return await this.usersService.updateUser(req.user.id, updateUserDto);
+  }
+
+  @Get('me/wishes')
+  @UseGuards(JwtAuthGuard)
+  async getOwnWishes(@Req() req: IUserRequest): Promise<Wish[]> {
+    return this.usersService.findOwnWishes(req.user.id);
   }
 
   @Post('find')
