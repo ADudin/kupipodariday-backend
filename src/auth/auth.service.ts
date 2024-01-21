@@ -17,8 +17,24 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload) };
   }
 
+  // async validateUser(username: string, password: string) {
+  //   const user = await this.usersService.findUserInfo('username', username);
+    
+  //   if (!user) {
+  //     throw new UnauthorizedException('Имя пользователя или пароль не совпадают');
+  //   }
+
+  //   const isCorrect = this.hashService.compare(password, user.password);
+
+  //   if (!isCorrect) {
+  //     throw new UnauthorizedException('Имя пользователя или пароль не совпадают');
+  //   }
+
+  //   return user;
+  // }
+
   async validateUser(username: string, password: string) {
-    const user = await this.usersService.findUserInfo('username', username);
+    const user = await this.usersService.findUserInfoWithPassword(username);
     
     if (!user) {
       throw new UnauthorizedException('Имя пользователя или пароль не совпадают');

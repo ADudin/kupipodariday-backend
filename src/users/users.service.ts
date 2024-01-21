@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { HashService } from 'src/hash/hash.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { Wish } from 'src/wishes/entities/wish.entity';
+import { TUser } from './types/user.type';
 
 @Injectable()
 export class UsersService {
@@ -17,11 +18,25 @@ export class UsersService {
     private readonly hashService: HashService,
   ) {}
 
-  async findUserInfo(key: string | number, param: any): Promise<User> {
+  async findUserInfo(key: string | number, param: any): Promise<TUser> {
     return await this.usersRepository.findOneBy({ [key]: param });
   }
+
+  async findUserInfoWithPassword(username: string): Promise<User> {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', {username})
+      .addSelect(['user.password'])
+      .getOne();
+
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND); 
+    }
+
+    return user;
+  }
   
-  async findUserName(userName: string): Promise<User> {
+  async findUserName(userName: string): Promise<TUser> {
     const user = await this.usersRepository.findOne({
       where: {
         username: userName
@@ -34,20 +49,6 @@ export class UsersService {
 
     return user;
   }
-
-  // async findUserEmail(userEmail: string): Promise<User> {
-  //   const user = await this.usersRepository.findOne({
-  //     where: {
-  //       email: userEmail
-  //     },
-  //   });
-
-  //   if (!user) {
-  //     throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
-  //   }
-
-  //   return user;
-  // }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const userName = await this.usersRepository.findOne({
@@ -75,14 +76,27 @@ export class UsersService {
   }
 
   async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const users = await this.usersRepository.findBy([
-      { username: updateUserDto.username },
-      { email: updateUserDto.email },
-    ]);
+    const usersWithSameUsername = await this.usersRepository.find({
+      where: {
+        username: updateUserDto.username,
+      },
+    });
 
-    for (const user of users) {
-      if (user.id !== userId) {
-        throw new HttpException('Пользователь с таким именем или адресом электронной почты уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+    for (const user of usersWithSameUsername) {
+      if (user.username === updateUserDto.username && user.id !== userId) {
+        throw new HttpException('Пользователь с таким именем уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+      }
+    }
+
+    const usersWithSameEmail = await this.usersRepository.find({
+      where: {
+        email: updateUserDto.email,
+      },
+    });
+
+    for (const user of usersWithSameEmail) {
+      if (user.email === updateUserDto.email && user.id !== userId) {
+        throw new HttpException('Пользователь с таким адресом электронной почты уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
       }
     }
 
@@ -108,7 +122,7 @@ export class UsersService {
     });
   }
 
-  async findMany(query: string): Promise<User[]> {
+  async findMany(query: string): Promise<TUser[]> {
     return await this.usersRepository.findBy([
       { username: Like(`%${query}%`) },
       { email: Like(`%${query}%`) },

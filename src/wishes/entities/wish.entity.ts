@@ -50,7 +50,7 @@ export class Wish extends BaseEntity {
   copied: number;
 
   @ManyToOne(() => User, (user) => user.wishes)
-  owner: User;
+  owner: TUser;
 
   @ManyToOne(() => Offer, (offer) => offer.item)
   offers: Offer[];

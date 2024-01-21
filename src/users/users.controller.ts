@@ -21,8 +21,7 @@ export class UsersController {
   @Get(':username')
   @UseGuards(JwtAuthGuard)
   async findUserByName(@Param('username') username: string): Promise<TUser> {
-    const { password, ...rest } = await this.usersService.findUserName(username);
-    return rest;
+    return await this.usersService.findUserName(username); 
   }
 
   @Patch('me')
