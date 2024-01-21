@@ -14,7 +14,7 @@ export class UsersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async findMe(@Req() req: IUserRequest): Promise<TUser> {
-    const { password, ...rest } = await req.user;
+    const { password, ...rest } = req.user;
     return rest;
   }
 

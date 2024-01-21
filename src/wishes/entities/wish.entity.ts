@@ -1,8 +1,9 @@
 import { IsNumber, IsString, IsUrl, MaxLength, Min, MinLength } from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
+import { TUser } from 'src/users/types/user.type';
 import { BaseEntity } from 'src/utils/base.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Wish extends BaseEntity {

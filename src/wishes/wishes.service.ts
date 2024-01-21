@@ -12,11 +12,12 @@ export class WishesService {
     private readonly wishesRepository: Repository<Wish>,
   ) {}
 
-  async create(createWishDto: CreateWishDto, owner: User): Promise<Wish> {
+  async create(createWishDto: CreateWishDto, owner: User): Promise<Record<string, never>> {
     const wish = new Wish();
     Object.assign(wish, createWishDto);
     wish.owner = owner;
-    return await this.wishesRepository.save(wish);
+    await this.wishesRepository.save(wish);
+    return {};
   }
 
   async findLast(): Promise<Wish[]> {
@@ -49,6 +50,8 @@ export class WishesService {
     if(!wish) {
       throw new HttpException('Подарок не найден', HttpStatus.BAD_REQUEST);
     }
+
+    //добавить offers!
 
     return wish;
   }

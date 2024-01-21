@@ -11,8 +11,9 @@ export class WishesController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createWishDto: CreateWishDto, @Req() req: IUserRequest): Promise<Wish> {
-    return this.wishesService.create(createWishDto, req.user);
+  async create(@Body() createWishDto: CreateWishDto, @Req() req: IUserRequest): Promise<Record<string, never>> {
+    await this.wishesService.create(createWishDto, req.user);
+    return {};
   }
 
   @Get('last')
