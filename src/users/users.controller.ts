@@ -37,6 +37,12 @@ export class UsersController {
     return this.usersService.findOwnWishes(req.user.id);
   }
 
+  @Get(':username/wishes')
+  @UseGuards(JwtAuthGuard)
+  async getWishesByUsername(@Param('username') username: string ): Promise<Wish[]> {
+    return this.usersService.findWishesByUsername(username);
+  }
+
   @Post('find')
   @UseGuards(JwtAuthGuard)
   async findMany(@Body() findUsersDto: FindUsersDto): Promise<TUser[]> {

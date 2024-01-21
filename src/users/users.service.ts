@@ -102,6 +102,12 @@ export class UsersService {
     });
   }
 
+  async findWishesByUsername(username: string): Promise<Wish[]> {
+    return await this.wishesRepository.findBy({
+      owner: {username: username},
+    });
+  }
+
   async findMany(query: string): Promise<User[]> {
     return await this.usersRepository.findBy([
       { username: Like(`%${query}%`) },
