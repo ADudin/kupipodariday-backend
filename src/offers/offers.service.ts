@@ -40,6 +40,30 @@ export class OffersService {
     offer.user = user;
     await this.offersRepository.save(offer);
     await this.wishRepository.increment({ id: wish.id }, 'raised', createOfferDto.amount);
-    return {}
+    return {};
+  }
+
+  async findNotHiddenOffers(): Promise<Offer[]> {
+    return await this.offersRepository.find({
+      where: {
+        hidden: false,
+      },
+      relations: {
+        item: true,
+        user: true,
+      },
+    });
+  }
+
+  async findOne(offerId: number): Promise<Offer> {
+    return await this.offersRepository.findOne({
+      where: {
+        id: offerId,
+      },
+      relations: {
+        item: true,
+        user: true,
+      },
+    });
   }
 }
