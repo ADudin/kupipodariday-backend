@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
 import { Repository } from 'typeorm';
@@ -36,12 +36,18 @@ export class WishesService {
   async findOne(id: number): Promise<Wish> {
     const wish = this.wishesRepository.findOne({
       where: {
-        id,
-      }
+        id: id,
+      },
+      relations: {
+        owner: true,
+        offers: {
+          user: true,
+        },
+      },
     });
 
     if(!wish) {
-      throw new BadRequestException('Подарок не найден');
+      throw new HttpException('Подарок не найден', HttpStatus.BAD_REQUEST);
     }
 
     return wish;

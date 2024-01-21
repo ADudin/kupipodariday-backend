@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/createWish.dto';
 import { Wish } from './entities/wish.entity';
@@ -24,5 +24,9 @@ export class WishesController {
   async getTopWishes(): Promise<Wish[]> {
     return this.wishesService.findTop();
   }
-  
+
+  @Get(':id')
+  async getWishById(@Param('id') id: number): Promise<Wish> {
+    return this.wishesService.findOne(id);
+  }
 }
