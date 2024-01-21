@@ -3,7 +3,7 @@ import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { TUser } from 'src/users/types/user.type';
 import { BaseEntity } from 'src/utils/base.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
 export class Wish extends BaseEntity {
@@ -52,6 +52,6 @@ export class Wish extends BaseEntity {
   @ManyToOne(() => User, (user) => user.wishes)
   owner: TUser;
 
-  @ManyToOne(() => Offer, (offer) => offer.item)
+  @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];
 }

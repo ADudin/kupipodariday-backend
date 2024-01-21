@@ -4,12 +4,15 @@ import { Wish } from './entities/wish.entity';
 import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
 import { User } from 'src/users/entities/user.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 
 @Injectable()
 export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
+    @InjectRepository(Offer)
+    private readonly offersRepository: Repository<Offer>,
   ) {}
 
   async create(createWishDto: CreateWishDto, owner: User): Promise<Record<string, never>> {
@@ -35,23 +38,19 @@ export class WishesService {
   }
 
   async findOne(id: number): Promise<Wish> {
-    const wish = this.wishesRepository.findOne({
+    const wish = await this.wishesRepository.findOne({
       where: {
         id: id,
       },
       relations: {
         owner: true,
-        offers: {
-          user: true,
-        },
+        offers: true,
       },
     });
 
     if(!wish) {
       throw new HttpException('Подарок не найден', HttpStatus.BAD_REQUEST);
     }
-
-    //добавить offers!
 
     return wish;
   }
