@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/createWish.dto';
 import { Wish } from './entities/wish.entity';
 import { IUserRequest } from 'src/users/types/user.type';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UpdateWishDto } from './dto/updateWish.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('wishes')
 export class WishesController {
@@ -29,5 +31,11 @@ export class WishesController {
   @Get(':id')
   async getWishById(@Param('id') id: number): Promise<Wish> {
     return this.wishesService.findOne(id);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateWish(@Param('id') id: number, @Body() updateWishDto: UpdateWishDto, @Req() req: IUserRequest): Promise<Record<string, never>> {
+    return this.wishesService.updateOne(id, updateWishDto, req.user);
   }
 }

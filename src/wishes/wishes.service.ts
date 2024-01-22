@@ -4,15 +4,13 @@ import { Wish } from './entities/wish.entity';
 import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
 import { User } from 'src/users/entities/user.entity';
-import { Offer } from 'src/offers/entities/offer.entity';
+import { UpdateWishDto } from './dto/updateWish.dto';
 
 @Injectable()
 export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
-    @InjectRepository(Offer)
-    private readonly offersRepository: Repository<Offer>,
   ) {}
 
   async create(createWishDto: CreateWishDto, owner: User): Promise<Record<string, never>> {
@@ -53,5 +51,20 @@ export class WishesService {
     }
 
     return wish;
+  }
+
+  async updateOne(id: number, updateWishDto: UpdateWishDto, user: User): Promise<Record<string, never>> {
+    const wish = await this.findOne(id);
+
+    if (wish.owner.id !== user.id) {
+      throw new HttpException('Подарок принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+    }
+
+    if (wish.raised != 0.00) {
+      throw new HttpException('Нельзя изменить данные о подарке, который поддержали другие пользователи', HttpStatus.FORBIDDEN);
+    }
+
+    await this.wishesRepository.update(id, updateWishDto);
+    return {};
   }
 }
