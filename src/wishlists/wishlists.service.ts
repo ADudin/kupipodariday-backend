@@ -1,17 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wishlist } from './entities/wishlist.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
-import { WishesService } from '../wishes/wishes.service';
 import { TUser } from 'src/users/types/user.type';
+import { UpdateWishlistDto } from './dto/updateWishlist.dto';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Injectable()
 export class WishlistsService {
   constructor(
     @InjectRepository(Wishlist)
     private readonly wishlistsRepository: Repository<Wishlist>,
-    private readonly wishesService: WishesService,
+    @InjectRepository(Wish)
+    private readonly wishesRepository: Repository<Wish>,
   ) {}
 
   async findAll(userId: number): Promise<Wishlist[]> {
@@ -48,12 +50,31 @@ export class WishlistsService {
 
   async create(createWishlistDto: CreateWishlistDto, user: TUser): Promise<Wishlist> {
     const { name, image, itemsId } = createWishlistDto;
-    const wishes = [];
-
-    for (const itemId of itemsId) {
-      wishes.push((await this.wishesService.findOne(itemId)));
-    }
+    
+    const wishes = await this.wishesRepository.findBy({ id: In(itemsId) });
 
     return this.wishlistsRepository.save({ name, image, items: wishes, owner: user });
+  }
+
+  async update(wishlistId: number, updateWishlistDto: UpdateWishlistDto, user: TUser) {
+    const { itemsId, ...wishlist } = updateWishlistDto;
+    const wishlistToUpdate = await this.findOne(wishlistId);
+
+    if (!itemsId) {
+      const wishes = wishlistToUpdate.items;
+      console.log(wishes);
+      wishlist['items'] = wishes;
+    }
+
+    if (wishlistToUpdate.owner.id !== user.id) {
+      throw new HttpException('Список подарков принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+    }
+
+    await this.wishlistsRepository.update(
+      { id: wishlistId, owner: { id: user.id } },
+      wishlist,
+    )
+
+    return this.findOne(wishlistId);
   }
 }
