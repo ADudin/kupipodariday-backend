@@ -14,11 +14,29 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
 
+  async findAll(userId: number): Promise<Wishlist[]> {
+    return await this.wishlistsRepository.find({
+      where: {
+        owner: {
+          id: userId
+        },
+      },
+      relations: {
+        items: true,
+        owner: true,
+      },
+    });
+  }
+
   async findOne(id: number): Promise<Wishlist> {
-    const wishlist = this.wishlistsRepository.findOne({
+    const wishlist = await this.wishlistsRepository.findOne({
       where: {
         id,
-      }
+      },
+      relations: {
+        items: true,
+        owner: true,
+      },
     });
 
     if(!wishlist) {
