@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
+import { TUser } from 'src/users/types/user.type';
 import { BaseEntity } from 'src/utils/base.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Wishlist extends BaseEntity {
@@ -17,7 +18,7 @@ export class Wishlist extends BaseEntity {
   })
   name: string;
 
-  @Column()
+  @Column({ default: 'Пока нет описания'})
   @IsString()
   @MinLength(1, {
     message: 'Описание списка подарков должно содержать не менее 1 символа',
@@ -36,6 +37,5 @@ export class Wishlist extends BaseEntity {
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)
-  @JoinColumn()
-  owner: User;
+  owner: TUser;
 }
