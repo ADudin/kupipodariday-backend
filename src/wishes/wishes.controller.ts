@@ -44,4 +44,10 @@ export class WishesController {
   async removeWish(@Param('id') id: number, @Req() req: IUserRequest): Promise<Wish> {
     return this.wishesService.removeOne(id, req.user);
   }
+
+  @Post(':id/copy')
+  @UseGuards(JwtAuthGuard)
+  async copyWish(@Param('id') id: number, @Req() req: IUserRequest): Promise<Record<string, never>> {
+    return this.wishesService.copyById(id, req.user);
+  }
 }

@@ -14,7 +14,7 @@ export class WishesService {
     private readonly wishesRepository: Repository<Wish>,
   ) {}
 
-  async create(createWishDto: CreateWishDto, owner: User): Promise<Record<string, never>> {
+  async create(createWishDto: CreateWishDto, owner: TUser): Promise<Record<string, never>> {
     const wish = new Wish();
     Object.assign(wish, createWishDto);
     wish.owner = owner;
@@ -83,5 +83,28 @@ export class WishesService {
     await this.wishesRepository.delete(id);
     
     return wishToRemove;
+  }
+
+  async copyById(wishId: number, user: TUser): Promise<Record<string, never>> {
+    const wishToCopy = await this.wishesRepository.findOne({
+      where: { id: wishId },
+      relations: {  owner: true },
+    });
+
+    if (user.id === wishToCopy.owner.id) {
+      throw new HttpException('Нельзя копировать свой подарок', HttpStatus.FORBIDDEN);
+    }
+
+    const createWishDto: CreateWishDto = {
+      name: wishToCopy.name,
+      link: wishToCopy.link,
+      image: wishToCopy.image,
+      price: wishToCopy.price,
+      description: wishToCopy.description,
+    }
+    
+    await this.create(createWishDto, user);
+    await this.wishesRepository.increment({ id: wishId }, 'copied', 1);
+    return {};
   }
 }
