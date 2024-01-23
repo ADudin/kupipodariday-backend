@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/createWish.dto';
 import { Wish } from './entities/wish.entity';
@@ -37,5 +37,11 @@ export class WishesController {
   @UseGuards(JwtAuthGuard)
   async updateWish(@Param('id') id: number, @Body() updateWishDto: UpdateWishDto, @Req() req: IUserRequest): Promise<Record<string, never>> {
     return this.wishesService.updateOne(id, updateWishDto, req.user);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async removeWish(@Param('id') id: number, @Req() req: IUserRequest): Promise<Wish> {
+    return this.wishesService.removeOne(id, req.user);
   }
 }

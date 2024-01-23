@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/createWish.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateWishDto } from './dto/updateWish.dto';
+import { TUser } from 'src/users/types/user.type';
 
 @Injectable()
 export class WishesService {
@@ -53,7 +54,7 @@ export class WishesService {
     return wish;
   }
 
-  async updateOne(id: number, updateWishDto: UpdateWishDto, user: User): Promise<Record<string, never>> {
+  async updateOne(id: number, updateWishDto: UpdateWishDto, user: TUser): Promise<Record<string, never>> {
     const wish = await this.findOne(id);
 
     if (wish.owner.id !== user.id) {
@@ -66,5 +67,21 @@ export class WishesService {
 
     await this.wishesRepository.update(id, updateWishDto);
     return {};
+  }
+
+  async removeOne(id: number, user: TUser): Promise<Wish> {
+    const wishToRemove = await this.findOne(id);
+
+    if (wishToRemove.owner.id !== user.id) {
+      throw new HttpException('Подарок принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+    }
+
+    if (wishToRemove.raised != 0.00) {
+      throw new HttpException('Нельзя удалить подарок, который поддержали другие пользователи', HttpStatus.FORBIDDEN);
+    }
+
+    await this.wishesRepository.delete(id);
+    
+    return wishToRemove;
   }
 }
