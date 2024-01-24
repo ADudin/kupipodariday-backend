@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateWishlistDto } from './dto/createWishlist.dto';
@@ -30,7 +30,13 @@ export class WishlistsController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  async updateWishlist(@Param('id') id: number, @Body() updateWishlistDto: UpdateWishlistDto, @Req() req: IUserRequest) {
+  async updateWishlist(@Param('id') id: number, @Body() updateWishlistDto: UpdateWishlistDto, @Req() req: IUserRequest): Promise<Wishlist> {
     return this.wishlistsService.update(id, updateWishlistDto, req.user);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async removeWishlist(@Param('id') id: number, @Req() req: IUserRequest): Promise<Wishlist> {
+    return this.wishlistsService.removeOne(id, req.user);
   }
 }

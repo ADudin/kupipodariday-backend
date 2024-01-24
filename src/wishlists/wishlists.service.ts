@@ -56,7 +56,7 @@ export class WishlistsService {
     return this.wishlistsRepository.save({ name, image, items: wishes, owner: user });
   }
 
-  async update(wishlistId: number, updateWishlistDto: UpdateWishlistDto, user: TUser) {
+  async update(wishlistId: number, updateWishlistDto: UpdateWishlistDto, user: TUser): Promise<Wishlist> {
     const { itemsId, ...wishlist } = updateWishlistDto;
     const wishlistToUpdate = await this.findOne(wishlistId);
 
@@ -76,5 +76,16 @@ export class WishlistsService {
     )
 
     return this.findOne(wishlistId);
+  }
+
+  async removeOne(wishlistId: number, user: TUser): Promise<Wishlist> {
+    const wishlistToRemove = await this.findOne(wishlistId);
+
+    if (wishlistToRemove.owner.id !== user.id) {
+      throw new HttpException('Список подарков принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+    }
+
+    await this.wishlistsRepository.delete(wishlistId);
+    return wishlistToRemove;
   }
 }
