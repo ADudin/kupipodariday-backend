@@ -1,10 +1,24 @@
-import { IsNumber, IsString, IsUrl, MaxLength, Min, MinLength } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsUrl,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import { TUser } from 'src/users/types/user.type';
 import { BaseEntity } from 'src/utils/base.entity';
 import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Wish extends BaseEntity {
@@ -46,7 +60,7 @@ export class Wish extends BaseEntity {
   })
   description: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 0, default: 0})
+  @Column({ type: 'decimal', precision: 10, scale: 0, default: 0 })
   @IsNumber()
   copied: number;
 
@@ -59,5 +73,5 @@ export class Wish extends BaseEntity {
   @ManyToMany(() => Wishlist, (wishlist) => wishlist.items, {
     onDelete: 'CASCADE',
   })
-  wishlists: Wishlist[]
+  wishlists: Wishlist[];
 }

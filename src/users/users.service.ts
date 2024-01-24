@@ -11,7 +11,7 @@ import { TUser } from './types/user.type';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) 
+    @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Wish)
     private readonly wishesRepository: Repository<Wish>,
@@ -25,21 +25,21 @@ export class UsersService {
   async findUserInfoWithPassword(username: string): Promise<User> {
     const user = await this.usersRepository
       .createQueryBuilder('user')
-      .where('user.username = :username', {username})
+      .where('user.username = :username', { username })
       .addSelect(['user.password'])
       .getOne();
 
     if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND); 
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
     return user;
   }
-  
+
   async findUserName(userName: string): Promise<TUser> {
     const user = await this.usersRepository.findOne({
       where: {
-        username: userName
+        username: userName,
       },
     });
 
@@ -53,21 +53,27 @@ export class UsersService {
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const userName = await this.usersRepository.findOne({
       where: {
-        username: createUserDto.username
+        username: createUserDto.username,
       },
     });
     const userEmail = await this.usersRepository.findOne({
       where: {
-        email: createUserDto.email
+        email: createUserDto.email,
       },
     });
 
     if (userName !== null) {
-      throw new HttpException('Пользователь с таким именем уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        'Пользователь с таким именем уже существует',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     if (userEmail !== null) {
-      throw new HttpException('Пользователь с таким адресом электронной почты уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        'Пользователь с таким адресом электронной почты уже существует',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     createUserDto.password = this.hashService.getHash(createUserDto?.password);
@@ -75,7 +81,10 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     const usersWithSameUsername = await this.usersRepository.find({
       where: {
         username: updateUserDto.username,
@@ -84,7 +93,10 @@ export class UsersService {
 
     for (const user of usersWithSameUsername) {
       if (user.username === updateUserDto.username && user.id !== userId) {
-        throw new HttpException('Пользователь с таким именем уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          'Пользователь с таким именем уже существует',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
     }
 
@@ -96,7 +108,10 @@ export class UsersService {
 
     for (const user of usersWithSameEmail) {
       if (user.email === updateUserDto.email && user.id !== userId) {
-        throw new HttpException('Пользователь с таким адресом электронной почты уже существует', HttpStatus.UNPROCESSABLE_ENTITY);
+        throw new HttpException(
+          'Пользователь с таким адресом электронной почты уже существует',
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
       }
     }
 
@@ -118,7 +133,7 @@ export class UsersService {
 
   async findWishesByUsername(username: string): Promise<Wish[]> {
     return await this.wishesRepository.findBy({
-      owner: {username: username},
+      owner: { username: username },
     });
   }
 

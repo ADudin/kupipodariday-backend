@@ -10,7 +10,7 @@ export class Offer extends BaseEntity {
   @Column({ type: 'decimal', scale: 2 })
   @IsNumber()
   amount: number;
-  
+
   @Column({ default: false })
   @IsBoolean()
   hidden: boolean;

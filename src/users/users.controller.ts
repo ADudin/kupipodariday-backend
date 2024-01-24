@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { IUserRequest, TUser } from 'src/users/types/user.type';
 
@@ -21,12 +30,15 @@ export class UsersController {
   @Get(':username')
   @UseGuards(JwtAuthGuard)
   async findUserByName(@Param('username') username: string): Promise<TUser> {
-    return await this.usersService.findUserName(username); 
+    return await this.usersService.findUserName(username);
   }
 
   @Patch('me')
   @UseGuards(JwtAuthGuard)
-  async updateCurrentUser(@Req() req: IUserRequest, @Body() updateUserDto: UpdateUserDto): Promise<TUser> {
+  async updateCurrentUser(
+    @Req() req: IUserRequest,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<TUser> {
     return await this.usersService.updateUser(req.user.id, updateUserDto);
   }
 
@@ -38,7 +50,9 @@ export class UsersController {
 
   @Get(':username/wishes')
   @UseGuards(JwtAuthGuard)
-  async getWishesByUsername(@Param('username') username: string ): Promise<Wish[]> {
+  async getWishesByUsername(
+    @Param('username') username: string,
+  ): Promise<Wish[]> {
     return this.usersService.findWishesByUsername(username);
   }
 

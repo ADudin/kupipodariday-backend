@@ -1,4 +1,9 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wishlist } from './entities/wishlist.entity';
 import { In, Repository } from 'typeorm';
@@ -20,7 +25,7 @@ export class WishlistsService {
     return await this.wishlistsRepository.find({
       where: {
         owner: {
-          id: userId
+          id: userId,
         },
       },
       relations: {
@@ -41,22 +46,34 @@ export class WishlistsService {
       },
     });
 
-    if(!wishlist) {
+    if (!wishlist) {
       throw new BadRequestException('Список подарков не найден');
     }
 
     return wishlist;
   }
 
-  async create(createWishlistDto: CreateWishlistDto, user: TUser): Promise<Wishlist> {
+  async create(
+    createWishlistDto: CreateWishlistDto,
+    user: TUser,
+  ): Promise<Wishlist> {
     const { name, image, itemsId } = createWishlistDto;
-    
+
     const wishes = await this.wishesRepository.findBy({ id: In(itemsId) });
 
-    return this.wishlistsRepository.save({ name, image, items: wishes, owner: user });
+    return this.wishlistsRepository.save({
+      name,
+      image,
+      items: wishes,
+      owner: user,
+    });
   }
 
-  async update(wishlistId: number, updateWishlistDto: UpdateWishlistDto, user: TUser): Promise<Wishlist> {
+  async update(
+    wishlistId: number,
+    updateWishlistDto: UpdateWishlistDto,
+    user: TUser,
+  ): Promise<Wishlist> {
     const { itemsId, ...wishlist } = updateWishlistDto;
     const wishlistToUpdate = await this.findOne(wishlistId);
 
@@ -67,13 +84,16 @@ export class WishlistsService {
     }
 
     if (wishlistToUpdate.owner.id !== user.id) {
-      throw new HttpException('Список подарков принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'Список подарков принадлежит другому пользователю',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     await this.wishlistsRepository.update(
       { id: wishlistId, owner: { id: user.id } },
       wishlist,
-    )
+    );
 
     return this.findOne(wishlistId);
   }
@@ -82,7 +102,10 @@ export class WishlistsService {
     const wishlistToRemove = await this.findOne(wishlistId);
 
     if (wishlistToRemove.owner.id !== user.id) {
-      throw new HttpException('Список подарков принадлежит другому пользователю', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'Список подарков принадлежит другому пользователю',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     await this.wishlistsRepository.delete(wishlistId);

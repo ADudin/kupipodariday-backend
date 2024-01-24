@@ -15,7 +15,10 @@ export class OffersService {
     private readonly wishRepository: Repository<Wish>,
   ) {}
 
-  async create(createOfferDto: CreateOfferDto, user: User): Promise<Record<string, never>> {
+  async create(
+    createOfferDto: CreateOfferDto,
+    user: User,
+  ): Promise<Record<string, never>> {
     const offer = new Offer();
     const wish = await this.wishRepository.findOne({
       where: {
@@ -24,14 +27,20 @@ export class OffersService {
       relations: {
         owner: true,
       },
-    })
-    
+    });
+
     if (user.id === wish.owner.id) {
-      throw new HttpException('Нельзя вносить деньги на собственные подарки', HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        'Нельзя вносить деньги на собственные подарки',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     if (wish.price - wish.raised < createOfferDto.amount) {
-      throw new HttpException('Сумма собранных средств не может превышать стоимость подарка', HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new HttpException(
+        'Сумма собранных средств не может превышать стоимость подарка',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const { itemId, ...rest } = createOfferDto;
@@ -39,7 +48,11 @@ export class OffersService {
     offer.item = wish;
     offer.user = user;
     await this.offersRepository.save(offer);
-    await this.wishRepository.increment({ id: wish.id }, 'raised', createOfferDto.amount);
+    await this.wishRepository.increment(
+      { id: wish.id },
+      'raised',
+      createOfferDto.amount,
+    );
     return {};
   }
 

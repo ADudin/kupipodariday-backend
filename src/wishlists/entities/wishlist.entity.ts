@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsUrl, MaxLength, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { TUser } from 'src/users/types/user.type';
 import { BaseEntity } from 'src/utils/base.entity';
@@ -11,14 +17,14 @@ export class Wishlist extends BaseEntity {
   @IsString()
   @IsNotEmpty()
   @MinLength(1, {
-    message: 'Название списка подарков должно содержать не менее 1 символа'
+    message: 'Название списка подарков должно содержать не менее 1 символа',
   })
   @MaxLength(250, {
-    message: 'Название списка подарков должно содержать не более 250 символов'
+    message: 'Название списка подарков должно содержать не более 250 символов',
   })
   name: string;
 
-  @Column({ default: 'Пока нет описания'})
+  @Column({ default: 'Пока нет описания' })
   @IsString()
   @MinLength(1, {
     message: 'Описание списка подарков должно содержать не менее 1 символа',

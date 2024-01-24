@@ -12,8 +12,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(username: string, password: string) {
     const user = await this.authService.validateUser(username, password);
 
-    if(!user) {
-      throw new UnauthorizedException('имя пользователя или пароль не совпадают');
+    if (!user) {
+      throw new UnauthorizedException(
+        'имя пользователя или пароль не совпадают',
+      );
     }
 
     return user;

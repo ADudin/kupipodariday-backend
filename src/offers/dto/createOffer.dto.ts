@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, Min } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, Min } from 'class-validator';
 
 export class CreateOfferDto {
   @IsNumber()

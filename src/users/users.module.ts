@@ -8,10 +8,7 @@ import { WishesModule } from 'src/wishes/wishes.module';
 import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, Wish]),
-    HashModule,
-  ],
+  imports: [TypeOrmModule.forFeature([User, Wish]), HashModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

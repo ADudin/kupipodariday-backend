@@ -5,4 +5,4 @@ export type TUser = Omit<User, 'password' | 'hashPassword'>;
 
 export interface IUserRequest extends IRequest {
   user: User;
-};
+}

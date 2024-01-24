@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateOfferDto } from './dto/createOffer.dto';
@@ -11,7 +19,10 @@ export class OffersController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Body() createOfferDto: CreateOfferDto, @Req() req: IUserRequest): Promise<Record<string, never>> {
+  async create(
+    @Body() createOfferDto: CreateOfferDto,
+    @Req() req: IUserRequest,
+  ): Promise<Record<string, never>> {
     await this.offersService.create(createOfferDto, req.user);
     return {};
   }
